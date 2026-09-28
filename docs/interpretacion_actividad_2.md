@@ -1,4 +1,4 @@
-Interpretación de la asignación — Actividad 2
+# Interpretación de la asignación — Actividad 2
 
 Comportamiento local del sistema
 En la parte física, el proyecto funciona básicamente igual que en la primera actividad. El ESP32 lee el lector RFID cada 2.6 segundos, verifica que el código de la tarjeta esté completo y lo compara contra la tarjeta autorizada (75 F2 DD 13). La gran diferencia es que quité todos los delay() y los cambié por temporizadores con millis(), logrando que la placa atienda la red WiFi y las publicaciones MQTT en segundo plano sin pausar el sensor.
