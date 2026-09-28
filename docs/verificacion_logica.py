@@ -1,6 +1,6 @@
 # Script de verificacion (no es parte del firmware): simula la misma
 # logica de main.cpp para revisar que las reglas de bloqueo, confirmacion
-# de alarma e histeresis encadenan bien antes de probar en Wokwi.
+# de alarma y histeresis esten bien antes de probar en Wokwi.
 # Correr con: python3 docs/verificacion_logica.py
 
 # Simulacion en Python de la MISMA logica del main.cpp (no es Wokwi real,
@@ -90,12 +90,12 @@ def escenario(nombre, pasos):
     print(f"Estado final -> bloqueado={s.bloqueado} alarma={s.alarmaConfirmada} intentosFallidos={s.intentosFallidos}")
     print()
 
-# Condicion A: una credencial no autorizada, una sola vez
+
 escenario("A - un rechazo aislado", [
     ("leer", "AA BB CC DD"),
 ])
 
-# Condicion B: tres rechazos consecutivos -> bloqueo
+
 escenario("B - tres rechazos consecutivos", [
     ("leer", "AA BB CC DD"),
     ("esperar", 2600),
@@ -104,12 +104,12 @@ escenario("B - tres rechazos consecutivos", [
     ("leer", "AA BB CC DD"),
 ])
 
-# Dato invalido
+
 escenario("Dato invalido", [
     ("leer", "", False),
 ])
 
-# Cuatro rechazos consecutivos -> bloqueo + alarma
+
 escenario("4 rechazos seguidos -> bloqueo y alarma", [
     ("leer", "AA BB CC DD"),
     ("esperar", 2600),
@@ -120,18 +120,18 @@ escenario("4 rechazos seguidos -> bloqueo y alarma", [
     ("leer", "AA BB CC DD"),
 ])
 
-# Bloqueo completo + histeresis + vuelta a normal
+
 escenario("Bloqueo completo -> espera 17s + histeresis -> normal", [
     ("leer", "AA BB CC DD"),
     ("esperar", 2600),
     ("leer", "AA BB CC DD"),
     ("esperar", 2600),
     ("leer", "AA BB CC DD"),
-    ("esperar", 17000),   # se cumple el bloqueo
-    ("esperar", 1000),    # margen de histeresis
+    ("esperar", 17000),  
+    ("esperar", 1000),   
 ])
 
-# Acceso autorizado limpia la alarma
+
 escenario("Alarma confirmada y luego acceso autorizado la limpia", [
     ("leer", "AA BB CC DD"),
     ("esperar", 2600),
@@ -150,10 +150,10 @@ escenario("4 rechazos, bloqueo+alarma, pasa el tiempo, autorizada limpia", [
     ("esperar", 2600),
     ("leer", "AA BB CC DD"),
     ("esperar", 2600),
-    ("leer", "AA BB CC DD"),   # 3er rechazo -> bloqueo
+    ("leer", "AA BB CC DD"),   
     ("esperar", 2600),
-    ("leer", "AA BB CC DD"),   # 4to rechazo -> alarma (aunque este en bloqueo no se ignora, ya se conto antes de bloquear? revisar)
-    ("esperar", 18000),        # pasan los 17s + histeresis
+    ("leer", "AA BB CC DD"),   
+    ("esperar", 18000),        
     ("leer", TARJETA_AUTORIZADA),
 ])
 
@@ -163,10 +163,10 @@ escenario("Ciclo completo correcto", [
     ("esperar", 2600),
     ("leer", "AA BB CC DD"),
     ("esperar", 2600),
-    ("leer", "AA BB CC DD"),   # bloqueo
+    ("leer", "AA BB CC DD"),   
     ("esperar", 2600),
-    ("leer", "AA BB CC DD"),   # alarma confirmada
-    ("esperar", 17000),       # se cumple el bloqueo -> entra a histeresis
-    ("esperar", 1500),        # pasa el margen -> se desbloquea de verdad
-    ("leer", TARJETA_AUTORIZADA),  # ahora si se procesa y limpia la alarma
+    ("leer", "AA BB CC DD"),  
+    ("esperar", 17000),       
+    ("esperar", 1500),        
+    ("leer", TARJETA_AUTORIZADA),  
 ])
