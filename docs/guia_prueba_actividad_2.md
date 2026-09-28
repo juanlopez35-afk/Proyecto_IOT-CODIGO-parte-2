@@ -1,4 +1,4 @@
-Guía de prueba — Actividad 2
+# Guía de prueba — Actividad 2
 1. Configuración previa
 El archivo include/secrets.h viene listo para trabajar con el broker público broker.hivemq.com (puerto 1883, sin autenticación). Si en la entrega piden cambiar de servidor, solo hay que modificar las credenciales en ese archivo.
 
