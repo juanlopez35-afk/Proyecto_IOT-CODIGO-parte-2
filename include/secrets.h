@@ -1,9 +1,7 @@
 #ifndef SECRETS_H
 #define SECRETS_H
 
-// Listo para usar en Wokwi: red WiFi-GUEST del simulador + broker publico
-// de pruebas HiveMQ (sin usuario ni clave). Si el enunciado del curso pide
-// otro broker, cambia estos valores.
+
 
 #define WIFI_SSID     "Wokwi-GUEST"
 #define WIFI_PASSWORD ""
