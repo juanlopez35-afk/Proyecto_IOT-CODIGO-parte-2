@@ -1,16 +1,17 @@
-# Interpretación de la Asignación — Actividad 2
+Interpretación de la asignación — Actividad 2
+Comportamiento local del sistema
+En la parte física, el proyecto funciona básicamente igual que en la primera actividad. El ESP32 lee el lector RFID cada 2.6 segundos, verifica que el código de la tarjeta esté completo y lo compara contra la tarjeta autorizada (75 F2 DD 13). La gran diferencia es que quité todos los delay() y los cambié por temporizadores con millis(), logrando que la placa atienda la red WiFi y las publicaciones MQTT en segundo plano sin pausar el sensor.
 
-**Comportamiento local**
-El sistema sigue funcionando igual que en la actividad 1: el ESP32 lee el lector RFID cada 2.6 segundos, valida que el UID tenga un tamaño correcto antes de usarlo, y compara el código contra la tarjeta autorizada (`75 F2 DD 13`). Ahora esa lectura ya no usa `delay()`, sino temporizadores con `millis()`, para que el WiFi y el MQTT puedan atenderse sin detener el lector.
+Bloqueo, confirmaciones e histéresis
+El bloqueo temporal se activa al acumular 3 tarjetas rechazadas seguidas y dura 17 segundos. Para evitar que el sistema esté entrando y saliendo del bloqueo continuamente si alguien intenta pasar la tarjeta justo en el límite, se agregó un pequeño margen de tiempo extra (histéresis) antes de volver a la normalidad.
 
-**Cuándo se activa y cuándo vuelve a la normalidad**
-El bloqueo se activa cuando hay 3 tarjetas rechazadas seguidas (regla original) y dura 17 segundos. Después de esos 17 segundos el sistema espera un margen corto extra antes de dar por normalizado todo, para que no quede entrando y saliendo del bloqueo justo en el límite.
+Por otro lado, para que la alarma fuerte se dispare se requieren 4 rechazos consecutivos en lugar de 3. Esto funciona como un filtro de confirmación para asegurar que una lectura errónea o un fallo puntual del sensor no disparen la alarma de forma no deseada.
 
-**Confirmaciones e histéresis**
-Se necesitan 4 lecturas de rechazo seguidas (no solo 3) para que se confirme una alarma más fuerte, así una lectura rara del lector no dispara la alarma sola. El margen de histéresis es ese tiempo de espera extra después del bloqueo antes de volver a "normal".
+Envío de datos a la nube
+Cada 21 segundos el ESP32 reporta su estado enviando un paquete de información por MQTT hacia la nube. En ese envío van la identificación del equipo, el modo actual, si hay bloqueo o alarma activos y el número de secuencia. Desde la nube, el sistema también puede recibir y procesar los comandos AUTO, ARMAR y SILENCIAR.
 
-**Qué se envía a la nube**
-Cada 21 segundos se publica por MQTT un mensaje con el id del dispositivo, el modo, si hay alarma o bloqueo, y un número de secuencia. También se pueden mandar los comandos AUTO, ARMAR y SILENCIAR desde la nube.
+Dificultades presentadas
 
-**Dos dificultades**
-Cambiar los `delay()` por `millis()` sin dañar la lógica que ya tenía costó, porque hay que llevar varios tiempos a la vez. La segunda fue un error que no vi al principio: como el bloqueo se activa en el 3er rechazo, mi código cortaba la lectura ahí mismo y nunca llegaba a contar un 4to rechazo, así que la alarma de "4 lecturas consecutivas" nunca se podía activar. Lo corregí para que, aunque el sistema esté bloqueado, los rechazos sigan contando para la alarma (solo que ya no se vuelve a activar el bloqueo ni se concede acceso).
+Cambiar de delay() a millis(): Coordinar varios tiempos simultáneamente (la lectura del RFID, los temporizadores del bloqueo y los envíos a la nube) usando millis() fue un reto, ya que tocaba estructurar todo sin detener el procesador.
+
+El error en la lógica de la alarma: Al principio cometí el detalle de hacer que el bloqueo suspendiera la lectura de las tarjetas al llegar al 3.er rechazo. Por eso mismo, el sistema jamás registraba el 4.º intento fallido y la alarma no se activaba. Lo corregí modificando el flujo para que, aun estando bloqueado, el lector continúe contando los fallos para poder disparar la alarma, sin dar acceso ni reiniciar el tiempo de bloqueo.
