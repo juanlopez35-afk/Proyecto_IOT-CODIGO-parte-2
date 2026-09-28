@@ -3,22 +3,46 @@
   "author": "Proyecto IoT",
   "editor": "wokwi",
   "parts": [
-    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": {} },
-    { "type": "wokwi-rfid-rc522", "id": "rfid1", "top": -100, "left": 200, "attrs": {} },
-    { "type": "wokwi-led", "id": "led1", "top": 100, "left": 200, "attrs": { "color": "green" } },
-    { "type": "wokwi-buzzer", "id": "buzzer1", "top": 200, "left": 200, "attrs": {} }
+    { 
+      "type": "wokwi-esp32-devkit-v1", 
+      "id": "esp", 
+      "top": 0, 
+      "left": 0, 
+      "attrs": {} 
+    },
+    { 
+      "type": "board-mfrc522", 
+      "id": "rfid1", 
+      "top": -100, 
+      "left": 200, 
+      "attrs": { "uid": "75:f2:dd:13" } 
+    },
+    { 
+      "type": "wokwi-led", 
+      "id": "led1", 
+      "top": 100, 
+      "left": 200, 
+      "attrs": { "color": "green" } 
+    },
+    { 
+      "type": "wokwi-buzzer", 
+      "id": "buzzer1", 
+      "top": 200, 
+      "left": 200, 
+      "attrs": {} 
+    }
   ],
   "connections": [
-    [ "esp:21", "rfid1:SDA", "green", [] ],
-    [ "esp:18", "rfid1:SCK", "green", [] ],
-    [ "esp:23", "rfid1:MOSI", "green", [] ],
-    [ "esp:19", "rfid1:MISO", "green", [] ],
-    [ "esp:22", "rfid1:RST", "green", [] ],
+    [ "esp:D21", "rfid1:SDA", "green", [] ],
+    [ "esp:D18", "rfid1:SCK", "green", [] ],
+    [ "esp:D23", "rfid1:MOSI", "green", [] ],
+    [ "esp:D19", "rfid1:MISO", "green", [] ],
+    [ "esp:D22", "rfid1:RST", "green", [] ],
     [ "esp:3V3", "rfid1:3V3", "red", [] ],
     [ "esp:GND.1", "rfid1:GND", "black", [] ],
-    [ "esp:2", "led1:A", "green", [] ],
+    [ "esp:D2", "led1:A", "green", [] ],
     [ "esp:GND.1", "led1:C", "black", [] ],
-    [ "esp:5", "buzzer1:1", "red", [] ],
+    [ "esp:D5", "buzzer1:1", "red", [] ],
     [ "esp:GND.1", "buzzer1:2", "black", [] ]
   ]
 }
